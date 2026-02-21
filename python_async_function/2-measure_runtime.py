@@ -1,30 +1,21 @@
 #!/usr/bin/env python3
-"""Module contains function that checks async run time
+''' Description: Create a measure_time function with integers n and
+                 max_delay as arguments that measures the total execution
+                 time for wait_n(n, max_delay), and returns total_time / n.
+                 Your function should return a float.
+    Arguments: n: int, max_delay: int
+'''
 
-Imports:
-    1-concurrent_coroutines: async function to check
-    time: time module for getting time elapsed
-    asyncio: async module
-"""
-import time
-import asyncio
-n_wait = __import__('1-concurrent_coroutines').wait_n
+from time import time
+from asyncio import run
+
+wait_n = __import__('1-concurrent_coroutines').wait_n
 
 
-async def measure_time(n: int, max_delay: int) -> float:
-    """Function meausres async function runtime
-
-    Args:
-        n (int): num of times to run async function
-        max_delay (int): max delay of function
-
-    Returns:
-        float: return time
-    """
-    start_time = time.perf_counter()
-    asyncio.run(n_wait(n, max_delay))
-    end_time = time.perf_counter()
-
-    elapsed = end_time - start_time
-
-    return elapsed / n
+def measure_time(n: int, max_delay: int) -> float:
+    ''' Return execution time for wait_n given `n` and `max_delay`. '''
+    time_0 = time()
+    run(wait_n(n, max_delay))
+    time_1 = time()
+    elapsed_time = time_1 - time_0
+    return elapsed_time / n
