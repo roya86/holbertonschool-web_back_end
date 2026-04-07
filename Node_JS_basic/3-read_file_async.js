@@ -2,42 +2,49 @@ const fs = require('fs');
 
 function countStudents(path) {
   return new Promise((resolve, reject) => {
-    fs.readFile(path, 'utf8', (err, data) => {
-      if (err) {
-        reject(new Error('Cannot load the database'));
-        return;
-      }
+    fs.readFile(path,
+      { encoding: 'utf8', flag: 'r' },
+      (err, data) => {
+        if (err) {
+          reject(Error('Cannot load the database'));
+          return;
+        }
+        const response = [];
+        let msg;
 
-      const lines = data
-        .split('\n')
-        .filter(line => line.trim() !== '');
+        const content = data.split('\n');
 
-      const students = lines.slice(1);
+        let students = content.filter((item) => item);
 
-      console.log(`Number of students: ${students.length}`);
+        students = students.map((item) => item.split(','));
 
-      const fields = {};
+        const studentSize = students.length ? students.length - 1 : 0;
+        msg = `Number of students: ${studentSize}`;
+        console.log(msg);
 
-      students.forEach(line => {
-        const parts = line.split(',');
-        const firstname = parts[0];
-        const field = parts[3];
+        response.push(msg);
 
-        if (!fields[field]) {
-          fields[field] = [];
+        const fields = {};
+        for (const i in students) {
+          if (i !== 0) {
+            if (!fields[students[i][3]]) fields[students[i][3]] = [];
+
+            fields[students[i][3]].push(students[i][0]);
+          }
         }
 
-        fields[field].push(firstname);
-      });
+        delete fields.field;
 
-      Object.keys(fields).forEach(field => {
-        console.log(
-          `Number of students in ${field}: ${fields[field].length}. List: ${fields[field].join(', ')}`
-        );
-      });
+        for (const key of Object.keys(fields)) {
+          msg = `Number of students in ${key}: ${fields[key].length
+          }. List: ${fields[key].join(', ')}`;
 
-      resolve();
-    });
+          console.log(msg);
+
+          response.push(msg);
+        }
+        resolve(response);
+      });
   });
 }
 
